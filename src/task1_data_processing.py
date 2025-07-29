@@ -2,7 +2,7 @@ import pandas as pd
 
 fraud_data = pd.read_csv('../data/Fraud_Data.csv')
 creditcard_data = pd.read_csv('../data/creditcard.csv')
-ip_country_data = pd.read_csv('IpAddress_to_Country.csv')
+ip_country_data = pd.read_csv('../data/IpAddress_to_Country.csv')
 
 print('Fraude_Data.csv info:')
 fraud_data.info()
