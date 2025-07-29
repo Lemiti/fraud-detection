@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 
-fraud_data = pd.read_csv("../data/processed/fraud_data_cleaned.csv")
-ip_country_data = pd.read_csv("../data/prcessed/ip_country_data_cleaned.csv")
+fraud_data = pd.read_csv("../data/processed/fraud_data_cleand.csv")
+ip_country_data = pd.read_csv("../data/processed/ip_country_data_cleaned.csv")
 
 #Convert ip_address in fraud_data to integer format
 #Ensure ip_address is treated as string before conversion to handle potential float representations
@@ -10,7 +10,7 @@ fraud_data["ip_address_int"] = fraud_data["ip_address"].apply(lambda x: int(x) i
 
 #convert Ip address range in ip_country_data to integer format
 ip_country_data["lower_bound_ip_address_int"] = ip_country_data["lower_bound_ip_address"].apply(lambda x: int(x) if pd.notna(x) else None)
-ip_country_data["upper_bount_ip_address_int"] = ip_country_data["upper_bount_ip_address"].apply(lambda x: int(x) if pd.notna(x) else None)
+ip_country_data["upper_bound_ip_address_int"] = ip_country_data["upper_bound_ip_address"].apply(lambda x: int(x) if pd.notna(x) else None)
 
 
 #Sort ip_country_data by lower_bound_ip_address_int for efficient merging
