@@ -36,8 +36,8 @@ def predict_fraud():
     required_fields = ['user_id', 'purchase_value', 'source', 'browser', 'sex', 'age', 'country']
 
     #check if all required fields are present
-    for fields in required_fields:
-      if fields not in data:
+    for field in required_fields:
+      if field not in data:
         return jsonify({"error": f"Missing required field: {field}"}), 400
 
     #create a DataFrame from the input data
@@ -65,6 +65,8 @@ def predict_fraud():
     elif current_columns > expected_columns:
       input_encoded = input_encoded.iloc[:, :expected_columns]
 
+    input_encoded.columns = input_encoded.columns.astype(str)
+
     #make prediction
     prediction = rf_fraud_model.predict(input_encoded)[0]
     probability = rf_fraud_model.predict_proba(input_encoded)[0]
@@ -80,6 +82,37 @@ def predict_fraud():
 
   except Exception as e:
     return jsonify({"error": str(e)}), 500
+
+@app.route('/predict/creditcard', methods=['POST'])
+def predict_creditcard():
+    try:
+        data = request.get_json()
+
+        required_fields = ['Time', 'Amount'] + [f'V{i}' for i in range(1, 29)]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        input_df = pd.DataFrame([data])
+
+        feature_columns = ['Time'] + [f'V{i}' for i in range(1, 29)] + ['Amount']
+        input_features = input_df[feature_columns]
+
+        prediction = rf_creditcard_model.predict(input_features)[0]
+        probability = rf_creditcard_model.predict_proba(input_features)[0]
+
+        return jsonify({
+            "prediction": int(prediction),
+            "probability": {
+                "non_fraud": float(probability[0]),
+                "fraud": float(probability[1])
+            },
+            "risk_level": "High" if probability[1] > 0.7 else "Medium" if probability[1] > 0.3 else "Low"
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/health', methods=['GET'])
 def health_check():
